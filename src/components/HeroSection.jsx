@@ -32,9 +32,9 @@ const HeroSection = () => {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8"
+          className="text-xl md:text-2xl text-gray-600 mt-3 dark:text-gray-300 mb-8"
         >
-          Tech enthusiastic
+          Tech Enthusiast
         </motion.p>
         <motion.div
           initial={{ y: 20, opacity: 0 }}
@@ -72,7 +72,7 @@ const HeroSection = () => {
             <Github className="w-6 h-6" />
           </a>
           <a
-            href="https://linkedin.com"
+            href="https://www.linkedin.com/in/venu-gopal-7aa856251/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"

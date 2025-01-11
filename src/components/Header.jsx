@@ -62,7 +62,7 @@ const Header = () => {
             animate={{ opacity: 1, x: 0 }}
             className="text-2xl font-bold text-gray-800 dark:text-white"
           >
-            Portfolio
+            My Portfolio
           </motion.div>
 
           {/* Desktop Menu */}
@@ -90,7 +90,7 @@ const Header = () => {
               className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
               {isDark ? (
-                <Sun className="w-5 h-5 text-white" />
+                <Sun className="w-5 h-5" />
               ) : (
                 <Moon className="w-5 h-5" />
               )}
@@ -101,7 +101,7 @@ const Header = () => {
           <div className="md:hidden flex items-center">
             <button
               onClick={toggleTheme}
-              className="p-2 mr-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="p -2 mr-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
               {isDark ? (
                 <Sun className="w-5 h-5" />

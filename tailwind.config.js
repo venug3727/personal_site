@@ -1,6 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   daerkmode: "class",
+  theme: {
+    extend: {},
+  },
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {},

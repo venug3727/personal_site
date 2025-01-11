@@ -1,9 +1,15 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Download } from "lucide-react";
-import { db } from "../firebase"; // Assuming firebase is initialized in this file
-import { doc, getDoc } from "firebase/firestore"; // Import specific Firestore methods
-import { getAuth } from "firebase/auth";
+import { getFirestore, collection, getDocs } from "firebase/firestore"; // Firebase Firestore methods
+
+const getDriveEmbedUrl = (url) => {
+  const fileIdMatch = url.match(/\/d\/(.*?)(\/|$)/);
+  if (fileIdMatch && fileIdMatch[1]) {
+    return `https://drive.google.com/file/d/${fileIdMatch[1]}/preview`;
+  }
+  return null;
+};
 
 const ResumeSection = () => {
   const [resumeUrl, setResumeUrl] = useState(null);
@@ -11,35 +17,34 @@ const ResumeSection = () => {
 
   useEffect(() => {
     const fetchResumeUrl = async () => {
-      const auth = getAuth();
-      const currentUser = auth.currentUser;
+      try {
+        const db = getFirestore();
+        const resumeCollectionRef = collection(db, "resume");
 
-      if (currentUser) {
-        try {
-          const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-          if (userDoc.exists()) {
-            const data = userDoc.data();
-            setResumeUrl(data.resumeUrl || null); // Ensure it handles undefined resumeUrl
-          } else {
-            console.error("No document found for the current user.");
+        const querySnapshot = await getDocs(resumeCollectionRef);
+        querySnapshot.forEach((doc) => {
+          const resumeData = doc.data();
+          if (resumeData.resumeLink) {
+            setResumeUrl(resumeData.resumeLink);
           }
-        } catch (error) {
-          console.error("Error fetching resume URL:", error);
-        } finally {
-          setLoading(false); // Always stop loading after attempt
+        });
+
+        if (!resumeUrl) {
+          console.error("No resume URL found.");
         }
-      } else {
-        console.error("No user is logged in.");
+      } catch (error) {
+        console.error("Error fetching resume URL:", error);
+      } finally {
         setLoading(false);
       }
     };
 
     fetchResumeUrl();
-  }, []);
+  }, [resumeUrl]);
 
   const handleDownload = () => {
     if (resumeUrl) {
-      window.location.href = resumeUrl; // Trigger the download
+      window.open(resumeUrl, "_blank");
     } else {
       console.error("Resume URL is not available.");
     }
@@ -48,7 +53,9 @@ const ResumeSection = () => {
   return (
     <section id="resume" className="py-20 px-4 bg-gray-50 dark:bg-gray-800">
       <div className="container mx-auto max-w-4xl">
-        <h1>Resume</h1>
+        <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-white">
+          Resume
+        </h1>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -73,24 +80,46 @@ const ResumeSection = () => {
             {loading ? (
               <p>Loading...</p>
             ) : resumeUrl ? (
-              <motion.div
-                key="experience"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-                className="relative pl-8 border-l-2 border-blue-600"
-              >
-                <div className="absolute left-[-9px] top-0 w-4 h-4 bg-blue-600 rounded-full" />
-                <h4 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Senior Full Stack Developer
-                </h4>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Tech Company | 2020 - Present
-                </p>
-                <p className="mt-2 text-gray-600 dark:text-gray-300">
-                  Led development of multiple high-impact projects...
-                </p>
-              </motion.div>
+              <>
+                <motion.div
+                  key="experience"
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6 }}
+                  className="relative pl-8 border-l-2 border-blue-600"
+                >
+                  <div className="absolute left-[-9px] top-0 w-4 h-4 bg-blue-600 rounded-full" />
+                  <h4 className="text-xl font-semibold text-gray-900 dark:text-white">
+                    Senior Full Stack Developer
+                  </h4>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Tech Company | 2020 - Present
+                  </p>
+                  <p className="mt-2 text-gray-600 dark:text-gray-300">
+                    Led development of multiple high-impact projects...
+                  </p>
+                </motion.div>
+
+                {/* Display resume preview */}
+                <motion.div
+                  key="resume-preview"
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6 }}
+                  className="mt-8"
+                >
+                  <h4 className="text-xl font-semibold text-gray-900 dark:text-white">
+                    Resume Preview
+                  </h4>
+                  {resumeUrl && (
+                    <iframe
+                      src={getDriveEmbedUrl(resumeUrl)}
+                      className="w-full h-96 border rounded-lg mt-4"
+                      title="Resume Preview"
+                    />
+                  )}
+                </motion.div>
+              </>
             ) : (
               <p>No resume available for download.</p>
             )}
