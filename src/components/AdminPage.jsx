@@ -125,7 +125,7 @@ const DynamicInput = ({ label, items, setItems, placeholders }) => {
   );
 };
 
-const Admin = () => {
+const AdminPage = () => {
   const [project, setProject] = useState({
     title: "",
     description: "",
@@ -384,4 +384,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default AdminPage;

@@ -8,8 +8,9 @@ import SkillsSection from "./components/SkillsSection";
 import ProjectsSection from "./components/ProjectsSection";
 import ContactSection from "./components/ContactSection";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Admin from "./components/admin";
+
 import ResumeSection from "./components/ResumeSection";
+import Admin from "./components/AdminPage";
 
 // Admin Page Component (You can replace this with your actual admin content)
 function AdminPage() {
@@ -76,7 +77,7 @@ function App() {
           />
 
           {/* Admin page route */}
-          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </div>
     </Router>
