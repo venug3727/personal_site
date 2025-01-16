@@ -8,7 +8,7 @@ import SkillsSection from "./components/SkillsSection";
 import ProjectsSection from "./components/ProjectsSection";
 import ContactSection from "./components/ContactSection";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
+import Footer from "./components/Footer";
 import ResumeSection from "./components/ResumeSection";
 import Admin from "./components/AdminPage";
 
@@ -72,12 +72,13 @@ function App() {
                 <ProjectsSection />
                 <ResumeSection />
                 <ContactSection />
+                <Footer />
               </>
             }
           />
 
           {/* Admin page route */}
-          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
       </div>
     </Router>

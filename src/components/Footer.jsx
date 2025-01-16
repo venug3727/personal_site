@@ -28,8 +28,8 @@ const Footer = () => {
             <a href="#about" className="hover:text-gray-400 transition">
               About
             </a>
-            <a href="#services" className="hover:text-gray-400 transition">
-              Services
+            <a href="/admin" className="hover:text-gray-400 transition">
+              Admin
             </a>
             <a href="#contact" className="hover:text-gray-400 transition">
               Contact
@@ -72,7 +72,10 @@ const Footer = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 1.0 }}
         >
-          <p>© {new Date().getFullYear()} [Your Name]. All rights reserved.</p>
+          <p>
+            © {new Date().getFullYear()} Venugopal C S (VG). All rights
+            reserved.
+          </p>
         </motion.div>
       </div>
     </footer>

@@ -11,7 +11,7 @@ const ProjectsSection = () => {
 
   const fetchProjects = async () => {
     try {
-      const projectsRef = collection(db, "projects"); // Reference to the "projects" collection in Firestore
+      const projectsRef = collection(db, "project"); // Reference to the "projects" collection in Firestore
       const querySnapshot = await getDocs(projectsRef);
 
       if (!querySnapshot.empty) {
