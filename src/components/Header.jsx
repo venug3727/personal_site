@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-scroll";
 import { Moon, Sun, Menu, X } from "lucide-react";
 import { motion } from "framer-motion";
-
+import image from "./image.png";
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -60,8 +60,9 @@ const Header = () => {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="text-2xl font-bold text-gray-800 dark:text-white"
+            className="text-2xl font-bold flex text-gray-800 dark:text-white"
           >
+            <img className="h-10 w-10 mr-[10px]" src={image} alt="logo" />
             My Portfolio
           </motion.div>
 
