@@ -11,7 +11,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Footer from "./components/Footer";
 import ResumeSection from "./components/ResumeSection";
 import Admin from "./components/AdminPage";
-import Certificates from "./components/certificates";
+import Certificates from "./components/Achievement";
 
 // Admin Page Component (You can replace this with your actual admin content)
 function AdminPage() {
