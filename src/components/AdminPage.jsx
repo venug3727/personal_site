@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { initializeApp, getApp, getApps } from "firebase/app";
 import { getFirestore, doc, setDoc, collection } from "firebase/firestore";
-import { Upload, Plus } from "lucide-react";
+import { Upload, Plus, Trophy, Medal, Award } from "lucide-react";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -23,6 +23,13 @@ if (getApps().length === 0) {
 }
 
 const db = getFirestore(app); // Initialize Firestore
+
+// Icon mapping
+const iconMap = {
+  trophy: Trophy,
+  medal: Medal,
+  award: Award,
+};
 
 // Helper Input Component
 const Input = ({
@@ -54,22 +61,13 @@ const Input = ({
 );
 
 // Dynamic Input Component for adding items to an array
-const DynamicInput = ({ label, items, setItems, placeholders }) => {
-  const [currentItemTitle, setCurrentItemTitle] = useState("");
-  const [currentItemDescription, setCurrentItemDescription] = useState("");
+const DynamicInput = ({ label, items, setItems, placeholders, fields }) => {
+  const [currentItem, setCurrentItem] = useState({});
 
   const handleAdd = () => {
-    if (currentItemTitle.trim() === "" || currentItemDescription.trim() === "")
-      return;
-    setItems([
-      ...items,
-      {
-        title: currentItemTitle.trim(),
-        description: currentItemDescription.trim(),
-      },
-    ]);
-    setCurrentItemTitle("");
-    setCurrentItemDescription("");
+    if (Object.values(currentItem).some((value) => !value)) return;
+    setItems([...items, currentItem]);
+    setCurrentItem({});
   };
 
   const handleRemove = (index) => {
@@ -86,7 +84,9 @@ const DynamicInput = ({ label, items, setItems, placeholders }) => {
         {items.map((item, index) => (
           <div key={index} className="flex items-center justify-between">
             <span>
-              {item.title} - {item.description}
+              {fields
+                .map((field) => `${field.label}: ${item[field.key]}`)
+                .join(", ")}
             </span>
             <button
               type="button"
@@ -98,20 +98,18 @@ const DynamicInput = ({ label, items, setItems, placeholders }) => {
           </div>
         ))}
         <div className="flex">
-          <input
-            type="text"
-            value={currentItemTitle}
-            onChange={(e) => setCurrentItemTitle(e.target.value)}
-            placeholder={placeholders.title}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-          />
-          <input
-            type="text"
-            value={currentItemDescription}
-            onChange={(e) => setCurrentItemDescription(e.target.value)}
-            placeholder={placeholders.description}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ml-2"
-          />
+          {fields.map((field) => (
+            <input
+              key={field.key}
+              type="text"
+              value={currentItem[field.key] || ""}
+              onChange={(e) =>
+                setCurrentItem({ ...currentItem, [field.key]: e.target.value })
+              }
+              placeholder={field.placeholder}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ml-2"
+            />
+          ))}
           <button
             type="button"
             onClick={handleAdd}
@@ -137,9 +135,9 @@ const AdminPage = () => {
     tags: [],
   });
 
-  const [skills, setSkills] = useState([]); // Initialize as an array
-  const [certificates, setCertificates] = useState([]); // Initialize as an array
-  const [achievements, setAchievements] = useState([]); // Initialize as an array
+  const [skills, setSkills] = useState([]);
+  const [certificates, setCertificates] = useState([]);
+  const [achievements, setAchievements] = useState([]);
   const [uploading, setUploading] = useState(false);
 
   const handleChange = (e, section) => {
@@ -252,8 +250,7 @@ const AdminPage = () => {
             <textarea
               name="description"
               rows={4}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 ```javascript
-              focus:ring-blue-500 focus:border-transparent transition-colors"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
               placeholder="Describe your project..."
               value={project.description}
               onChange={(e) => handleChange(e, "project")}
@@ -306,12 +303,20 @@ const AdminPage = () => {
           {/* Dynamic Input for Skills */}
           <DynamicInput
             label="Add Skills"
-            items={skills} // Pass the skills array directly
+            items={skills}
             setItems={setSkills}
             placeholders={{
               title: "Skill",
               description: "Percentage",
             }}
+            fields={[
+              { key: "title", label: "Skill", placeholder: "Skill" },
+              {
+                key: "description",
+                label: "Percentage",
+                placeholder: "Percentage",
+              },
+            ]}
           />
         </div>
 
@@ -341,6 +346,22 @@ const AdminPage = () => {
             items={certificates}
             setItems={setCertificates}
             placeholders={{ title: "Certificate Title", description: "Link" }}
+            fields={[
+              {
+                key: "title",
+                label: "Title",
+                placeholder: "Certificate Title",
+              },
+              { key: "issuer", label: "Issuer", placeholder: "Issuer" },
+              { key: "date", label: "Date", placeholder: "Year" },
+              {
+                key: "credentialUrl",
+                label: "Credential URL",
+                placeholder: "https://...",
+              },
+              { key: "image", label: "Image URL", placeholder: "Image URL" },
+              { key: "category", label: "Category", placeholder: "Category" },
+            ]}
           />
         </div>
         <div className="text-center">
@@ -368,6 +389,16 @@ const AdminPage = () => {
             items={achievements}
             setItems={setAchievements}
             placeholders={{ title: "Achievement", description: "Details/Link" }}
+            fields={[
+              { key: "title", label: "Title", placeholder: "Achievement" },
+              {
+                key: "description",
+                label: "Description",
+                placeholder: "Details",
+              },
+              { key: "date", label: "Date", placeholder: "Year" },
+              { key: "icon", label: "Icon", placeholder: "Icon Name" },
+            ]}
           />
         </div>
         <div className="text-center">

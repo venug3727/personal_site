@@ -11,6 +11,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Footer from "./components/Footer";
 import ResumeSection from "./components/ResumeSection";
 import Admin from "./components/AdminPage";
+import Certificates from "./components/certificates";
 
 // Admin Page Component (You can replace this with your actual admin content)
 function AdminPage() {
@@ -71,6 +72,7 @@ function App() {
                 <SkillsSection />
                 <ProjectsSection />
                 <ResumeSection />
+                <Certificates />
                 <ContactSection />
                 <Footer />
               </>
