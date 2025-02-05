@@ -12,7 +12,7 @@ const iconMap = {
   award: Award,
 };
 
-const Certificates = () => {
+const Achievement = () => {
   const [certificates, setCertificates] = useState([]);
   const [achievements, setAchievements] = useState([]);
 
@@ -168,4 +168,4 @@ const Certificates = () => {
   );
 };
 
-export default Certificates;
+export default Achievement;
