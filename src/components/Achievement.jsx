@@ -104,7 +104,11 @@ const Achievement = () => {
                     {cert.issuer}
                   </p>
                   <a
-                    href={cert.credentialUrl}
+                    href={
+                      cert.credentialUrl.startsWith("http")
+                        ? cert.credentialUrl
+                        : `https://${cert.credentialUrl}`
+                    }
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline"
