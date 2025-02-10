@@ -6,6 +6,7 @@ import { getFirestore, collection, getDocs } from "firebase/firestore";
 // Initialize Firestore
 const db = getFirestore();
 
+// Map for achievement icons
 const iconMap = {
   trophy: Trophy,
   medal: Medal,
@@ -45,6 +46,7 @@ const Achievement = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 py-20 px-4">
       <div className="max-w-6xl mx-auto">
+        {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -56,7 +58,7 @@ const Achievement = () => {
           </h2>
           <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             A showcase of my professional certifications and notable
-            achievements throughout my career
+            achievements throughout my career.
           </p>
         </motion.div>
 
@@ -68,7 +70,7 @@ const Achievement = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {certificates.map((cert, index) => (
               <motion.div
-                key={cert.id}
+                key={cert.id || `cert-${index}`} // Ensure unique key
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -126,7 +128,7 @@ const Achievement = () => {
               const Icon = iconMap[achievement.icon];
               return (
                 <motion.div
-                  key={achievement.id}
+                  key={achievement.id || `achievement-${index}`} // Ensure unique key
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}

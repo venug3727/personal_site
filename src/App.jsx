@@ -12,6 +12,7 @@ import Footer from "./components/Footer";
 import ResumeSection from "./components/ResumeSection";
 import Admin from "./components/AdminPage";
 import Certificates from "./components/Achievement";
+import Achievement from "./components/Achievement";
 
 // Admin Page Component (You can replace this with your actual admin content)
 function AdminPage() {
@@ -72,7 +73,7 @@ function App() {
                 <SkillsSection />
                 <ProjectsSection />
                 <ResumeSection />
-                <Certificates />
+                <Achievement />
                 <ContactSection />
                 <Footer />
               </>

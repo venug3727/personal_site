@@ -18,7 +18,7 @@ const SkillsSection = () => {
 
         // Loop through documents to fetch skill data
         querySnapshot.forEach((doc) => {
-          skills.push(doc.data());
+          skills.push({ id: doc.id, ...doc.data() }); // Ensure unique IDs
         });
 
         setSkillsData(skills); // Set the fetched skills data
@@ -44,7 +44,7 @@ const SkillsSection = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {skillsData.map((group, index) => (
               <motion.div
-                key={group.category}
+                key={group.id || index} // Ensure unique key for each category
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -55,9 +55,12 @@ const SkillsSection = () => {
                   {group.category}
                 </h3>
                 <div className="space-y-4">
-                  {Array.isArray(group.skills) ? (
+                  {Array.isArray(group.skills) && group.skills.length > 0 ? (
                     group.skills.map((skill, skillIndex) => (
-                      <div key={skill.heading} className="space-y-2">
+                      <div
+                        key={skill.heading || skillIndex}
+                        className="space-y-2"
+                      >
                         <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
                           <span>
                             {skill.heading}: {skill.title}
@@ -79,7 +82,9 @@ const SkillsSection = () => {
                       </div>
                     ))
                   ) : (
-                    <p></p>
+                    <p className="text-gray-500 dark:text-gray-400">
+                      No skills available
+                    </p>
                   )}
                 </div>
               </motion.div>
