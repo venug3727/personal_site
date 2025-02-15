@@ -138,7 +138,7 @@ const Header = () => {
                 smooth={true}
                 offset={-70}
                 duration={500}
-                className={`text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white cursor-pointer transition-colors ${
+                className={`text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white pl-4 hover:scale-105 cursor-pointer flex  transition-colors ${
                   window.location.hash === `#${item.to}`
                     ? "font-bold text-blue-600 dark:text-blue-400"
                     : ""
