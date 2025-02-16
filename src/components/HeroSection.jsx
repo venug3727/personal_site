@@ -100,7 +100,7 @@ const HeroSection = () => {
           }}
           animate={{
             y: ["-20%", "120%"],
-            opacity: [0, 0.7, 0],
+            opacity: [1, 1, 1],
             rotate: Math.random() * 15 - 7 + "deg",
           }}
           transition={{

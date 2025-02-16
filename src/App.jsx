@@ -11,22 +11,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Footer from "./components/Footer";
 import ResumeSection from "./components/ResumeSection";
 import Admin from "./components/AdminPage";
-import Certificates from "./components/Achievement";
 import Achievement from "./components/Achievement";
-
-// Admin Page Component (You can replace this with your actual admin content)
-function AdminPage() {
-  return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-800 p-8">
-      <h1 className="text-4xl font-bold text-center text-gray-900 dark:text-white">
-        Admin Page
-      </h1>
-      <p className="text-lg text-center text-gray-600 dark:text-gray-300">
-        Welcome to the admin page. Here you can manage all your content.
-      </p>
-    </div>
-  );
-}
+import ProjectDetails from "./components/ProjectDetails"; // Ensure this file exists
 
 function App() {
   const [isDark, setIsDark] = useState(true);
@@ -37,25 +23,6 @@ function App() {
 
   const toggleTheme = () => {
     setIsDark((prev) => !prev);
-  };
-
-  const SectionTitle = ({ children }) => {
-    const [ref, inView] = useInView({
-      threshold: 0.3,
-      triggerOnce: true,
-    });
-
-    return (
-      <motion.h2
-        ref={ref}
-        initial={{ opacity: 0, y: 20 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.6 }}
-        className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-12 text-center"
-      >
-        {children}
-      </motion.h2>
-    );
   };
 
   return (
@@ -79,6 +46,7 @@ function App() {
               </>
             }
           />
+          <Route path="/projects/:projectId" element={<ProjectDetails />} />
 
           {/* Admin page route */}
           <Route path="/admin" element={<Admin />} />

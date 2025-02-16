@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ExternalLink, Github, ArrowRight } from "lucide-react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
+import { Link } from "react-router-dom";
 
 const ProjectsSection = () => {
   const [projects, setProjects] = useState([]);
@@ -144,7 +145,12 @@ const ProjectsSection = () => {
                         </a>
                       )}
                     </div>
-                    <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                    <Link
+                      to={`/projects/${project.id}`}
+                      className="group-hover:text-blue-500 transition-colors"
+                    >
+                      <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                    </Link>
                   </div>
                 </div>
 
