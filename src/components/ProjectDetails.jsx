@@ -4,6 +4,12 @@ import { ExternalLink, Github } from "lucide-react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
+// Helper function to extract Google Drive ID
+const extractDriveId = (url) => {
+  const match = url.match(/\/d\/([^\/]+)/);
+  return match ? match[1] : null;
+};
+
 const ProjectDetails = () => {
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
@@ -48,6 +54,13 @@ const ProjectDetails = () => {
     );
   }
 
+  const driveVideoId = project.videoLink
+    ? extractDriveId(project.videoLink)
+    : null;
+  const driveDemoId = project.links?.demo
+    ? extractDriveId(project.links.demo)
+    : null;
+
   return (
     <section className="py-24 px-4">
       <div className="container mx-auto max-w-4xl">
@@ -59,13 +72,31 @@ const ProjectDetails = () => {
         </button>
 
         <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-6">
-          <div className="relative h-96 overflow-hidden rounded-xl mb-6">
-            <img
-              src={project.imageLink || "/placeholder-project.png"}
-              alt={project.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
+          {/* Video Section */}
+          {driveVideoId && (
+            <div className="relative aspect-video overflow-hidden rounded-xl mb-6">
+              <iframe
+                src={`https://drive.google.com/file/d/${driveDemoId}/preview`}
+                className="w-full h-full"
+                allowFullScreen
+                title={project.title}
+                frameBorder="0"
+                scrolling="no"
+                style={{ overflow: "hidden" }}
+              />
+            </div>
+          )}
+
+          {/* Image Section */}
+          {project.imageLink && (
+            <div className="mb-6">
+              <img
+                src={project.imageLink}
+                alt={project.title}
+                className="w-full h-auto rounded-xl object-cover"
+              />
+            </div>
+          )}
 
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             {project.title}
@@ -86,8 +117,23 @@ const ProjectDetails = () => {
             {project.description}
           </p>
 
+          {/* Live Demo Section */}
+          {driveDemoId && (
+            <div className="relative aspect-video overflow-hidden rounded-xl mb-6">
+              <iframe
+                src={`https://drive.google.com/file/d/${driveDemoId}/preview`}
+                className="w-full h-full"
+                allowFullScreen
+                title="Live Demo"
+                frameBorder="0"
+                scrolling="no"
+                style={{ overflow: "hidden" }}
+              />
+            </div>
+          )}
+
           <div className="flex gap-4">
-            {project.links?.demo && (
+            {/* {project.links?.demo && (
               <a
                 href={project.links.demo}
                 target="_blank"
@@ -97,7 +143,7 @@ const ProjectDetails = () => {
                 <ExternalLink className="w-5 h-5" />
                 <span>Live Demo</span>
               </a>
-            )}
+            )} */}
 
             {project.links?.github && (
               <a
