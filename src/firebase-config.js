@@ -8,7 +8,5 @@ admin.initializeApp({
 
 // Export Firebase services
 const db = admin.firestore();
-const storage = admin.storage();
-const auth = admin.auth();
 
-export default { db, storage, auth };
+export default { db };
