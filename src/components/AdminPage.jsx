@@ -1,37 +1,28 @@
 import { useState } from "react";
 import { initializeApp, getApp, getApps } from "firebase/app";
 import { getFirestore, doc, setDoc, collection } from "firebase/firestore";
-import { Upload, Plus, Trophy, Medal, Award } from "lucide-react";
+import {
+  Upload,
+  Plus,
+  Trophy,
+  Medal,
+  Award,
+  Bookmark,
+  GitBranch,
+  ClipboardList,
+} from "lucide-react";
 
-// Firebase configuration
+// Firebase configuration (WARNING: This should be in environment variables in production)
 const firebaseConfig = {
-  apiKey: "AIzaSyDS27RDZrx72z7QwnedhX7iVkLXJW4t4Oc",
-  authDomain: "persnal-website-9ab5f.firebaseapp.com",
-  projectId: "persnal-website-9ab5f",
-  databaseURL: "https://persnal-website-9ab5f-default-rtdb.firebaseio.com/",
-  storageBucket: "persnal-website-9ab5f.appspot.com",
-  messagingSenderId: "135506035497",
-  appId: "1:135506035497:web:62199e679d661e2b3d6d38",
+  /* ... */
 };
 
 // Initialize Firebase
-let app;
-if (getApps().length === 0) {
-  app = initializeApp(firebaseConfig);
-} else {
-  app = getApp();
-}
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+const db = getFirestore(app);
 
-const db = getFirestore(app); // Initialize Firestore
+const iconMap = { trophy: Trophy, medal: Medal, award: Award };
 
-// Icon mapping
-const iconMap = {
-  trophy: Trophy,
-  medal: Medal,
-  award: Award,
-};
-
-// Helper Input Component
 const Input = ({
   label,
   type,
@@ -60,62 +51,102 @@ const Input = ({
   </div>
 );
 
-// Dynamic Input Component for adding items to an array
-const DynamicInput = ({ label, items, setItems, placeholders, fields }) => {
+const DynamicInput = ({ label, items, setItems, fields, section }) => {
   const [currentItem, setCurrentItem] = useState({});
+  const [error, setError] = useState("");
 
   const handleAdd = () => {
-    if (Object.values(currentItem).some((value) => !value)) return;
+    const missingFields = fields.filter((field) => !currentItem[field.key]);
+    if (missingFields.length > 0) {
+      setError(`Missing: ${missingFields.map((f) => f.label).join(", ")}`);
+      return;
+    }
+
     setItems([...items, currentItem]);
     setCurrentItem({});
+    setError("");
   };
 
   const handleRemove = (index) => {
-    const newItems = items.filter((_, i) => i !== index);
-    setItems(newItems);
+    setItems(items.filter((_, i) => i !== index));
   };
 
   return (
     <div className="mb-6">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        {label}
-      </label>
-      <div className="space-y-2">
+      <div className="flex items-center justify-between mb-3">
+        <label className="block text-sm font-medium text-gray-700">
+          {label}
+        </label>
+        {error && <span className="text-red-500 text-sm">{error}</span>}
+      </div>
+
+      <div className="space-y-3">
         {items.map((item, index) => (
-          <div key={index} className="flex items-center justify-between">
-            <span>
-              {fields
-                .map((field) => `${field.label}: ${item[field.key]}`)
-                .join(", ")}
-            </span>
+          <div
+            key={index}
+            className="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-200"
+          >
+            <div className="flex flex-wrap gap-3">
+              {fields.map((field) => (
+                <span key={field.key} className="text-sm">
+                  <span className="font-medium">{field.label}:</span>{" "}
+                  {item[field.key]}
+                </span>
+              ))}
+            </div>
             <button
               type="button"
               onClick={() => handleRemove(index)}
-              className="text-red-500"
+              className="text-red-500 hover:text-red-700 text-sm"
             >
               Remove
             </button>
           </div>
         ))}
-        <div className="flex">
+
+        <div className="flex flex-wrap gap-2">
           {fields.map((field) => (
-            <input
-              key={field.key}
-              type="text"
-              value={currentItem[field.key] || ""}
-              onChange={(e) =>
-                setCurrentItem({ ...currentItem, [field.key]: e.target.value })
-              }
-              placeholder={field.placeholder}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ml-2"
-            />
+            <div key={field.key} className="flex-1 min-w-[200px]">
+              {field.key === "icon" ? (
+                <select
+                  value={currentItem[field.key] || ""}
+                  onChange={(e) =>
+                    setCurrentItem({
+                      ...currentItem,
+                      [field.key]: e.target.value,
+                    })
+                  }
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">Select Icon</option>
+                  {Object.keys(iconMap).map((key) => (
+                    <option key={key} value={key}>
+                      {key}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  placeholder={field.placeholder}
+                  value={currentItem[field.key] || ""}
+                  onChange={(e) =>
+                    setCurrentItem({
+                      ...currentItem,
+                      [field.key]: e.target.value,
+                    })
+                  }
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              )}
+            </div>
           ))}
           <button
             type="button"
             onClick={handleAdd}
-            className="bg-green-500 text-white px-4 py-2 rounded-lg ml-2"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
           >
-            Add
+            <Plus size={16} /> Add
           </button>
         </div>
       </div>
@@ -127,11 +158,8 @@ const AdminPage = () => {
   const [project, setProject] = useState({
     title: "",
     description: "",
-    imageLink: "",
-    links: {
-      demo: "",
-      github: "",
-    },
+    imageLinks: [], // Array of image URLs
+    links: { demo: "", github: "", website: "" }, // Add website field
     tags: [],
   });
 
@@ -139,70 +167,46 @@ const AdminPage = () => {
   const [certificates, setCertificates] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [success, setSuccess] = useState({});
+  const [error, setError] = useState({});
 
-  const handleChange = (e, section) => {
-    const { name, value } = e.target;
-
-    if (section === "project") {
-      if (name.startsWith("links.")) {
-        const key = name.split(".")[1];
-        setProject((prev) => ({
-          ...prev,
-          links: { ...prev.links, [key]: value },
-        }));
-      } else if (name === "tags") {
-        setProject((prev) => ({
-          ...prev,
-          tags: value.split(",").map((tag) => tag.trim()),
-        }));
-      } else {
-        setProject((prev) => ({
-          ...prev,
-          [name]: value,
-        }));
-      }
-    }
-  };
-
-  // Handle form submission
   const handleSubmit = async (e, section) => {
     e.preventDefault();
     setUploading(true);
+    setError((prev) => ({ ...prev, [section]: "" }));
+    setSuccess((prev) => ({ ...prev, [section]: false }));
 
     try {
-      let data = {};
+      const data = {
+        project: project,
+        skills: { items: skills },
+        certificates: { items: certificates },
+        achievements: { items: achievements },
+      }[section];
 
-      // Prepare data for each section
-      if (section === "project") {
-        data = {
-          title: project.title,
-          description: project.description,
-          imageLink: project.imageLink,
-          links: project.links,
-          tags: project.tags,
-        };
-      }
-
-      if (section === "skills") {
-        data = { skills };
-      }
-
-      if (section === "certificates") {
-        data = { certificates };
-      }
-
-      if (section === "achievements") {
-        data = { achievements };
-      }
-
-      // Save the data to Firestore
       const sectionRef = doc(collection(db, section));
       await setDoc(sectionRef, data);
 
-      alert(`${section} details saved successfully!`);
-    } catch (error) {
-      console.error(`Error saving ${section} details:`, error);
-      alert(`Failed to save ${section} details...`);
+      setSuccess((prev) => ({ ...prev, [section]: true }));
+      setTimeout(
+        () => setSuccess((prev) => ({ ...prev, [section]: false })),
+        3000
+      );
+
+      // Reset form
+      if (section === "project") {
+        setProject({
+          title: "",
+          description: "",
+          imageLinks: [],
+          links: { demo: "", github: "", website: "" }, // Reset website field
+          tags: [],
+        });
+      } else {
+        eval(`set${section.charAt(0).toUpperCase() + section.slice(1)}([])`);
+      }
+    } catch (err) {
+      setError((prev) => ({ ...prev, [section]: err.message }));
     } finally {
       setUploading(false);
     }
@@ -211,206 +215,275 @@ const AdminPage = () => {
   return (
     <div className="max-w-4xl mx-auto py-12 px-4">
       <div className="text-center mb-12">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">
-          Admin Dashboard
+        <h1 className="text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-2">
+          <ClipboardList size={24} /> Admin Dashboard
         </h1>
         <p className="text-gray-600">
-          Fill in the details below and submit them independently.
+          Manage your portfolio content efficiently
         </p>
       </div>
 
-      {/* Project Details Section */}
-      <form onSubmit={(e) => handleSubmit(e, "project")} className="space-y-6">
-        <div className="p-6 rounded-lg mb-6 bg-white shadow-lg">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Project Details
+      {/* Project Form */}
+      <form onSubmit={(e) => handleSubmit(e, "project")} className="mb-8">
+        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <Upload size={20} /> Project Details
           </h2>
-          <div className="grid md:grid-cols-2 gap-6">
+
+          <div className="grid md:grid-cols-2 gap-4">
             <Input
               label="Project Title"
-              type="text"
               name="title"
-              placeholder="Enter project title"
               value={project.title}
-              onChange={(e) => handleChange(e, "project")}
+              onChange={(e) =>
+                setProject({ ...project, title: e.target.value })
+              }
             />
             <Input
-              label="Image Link"
-              type="text"
-              name="imageLink"
-              placeholder="Enter image URL"
-              value={project.imageLink}
-              onChange={(e) => handleChange(e, "project")}
+              label="Image URLs (comma-separated)"
+              value={project.imageLinks.join(", ")}
+              onChange={(e) =>
+                setProject({
+                  ...project,
+                  imageLinks: e.target.value
+                    .split(",")
+                    .map((link) => link.trim()),
+                })
+              }
             />
           </div>
+
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Project Description
+              Description
             </label>
             <textarea
-              name="description"
-              rows={4}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-              placeholder="Describe your project..."
               value={project.description}
-              onChange={(e) => handleChange(e, "project")}
+              onChange={(e) =>
+                setProject({ ...project, description: e.target.value })
+              }
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent h-32"
             />
           </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            <Input
-              label="Demo Link"
-              type="text"
-              name="links.demo"
-              placeholder="https://..."
-              value={project.links.demo}
-              onChange={(e) => handleChange(e, "project")}
-            />
-            <Input
-              label="GitHub Link"
-              type="text"
-              name="links.github"
-              placeholder="https://github.com/"
-              value={project.links.github}
-              onChange={(e) => handleChange(e, "project")}
-            />
-          </div>
-          <Input
-            label="Tags"
-            type="text"
-            name="tags"
-            placeholder="React, TypeScript, Tailwind CSS"
-            value={project.tags.join(",")}
-            onChange={(e) => handleChange(e, "project")}
-          />
-        </div>
 
-        <div className="text-center">
-          <button
-            type="submit"
-            disabled={uploading}
-            className="bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 disabled:opacity-50"
-          >
-            {uploading ? "Uploading..." : "Submit Project"}
-          </button>
+          <div className="grid md:grid-cols-2 gap-4">
+            <Input
+              label="Demo URL"
+              name="links.demo"
+              value={project.links.demo}
+              onChange={(e) =>
+                setProject({
+                  ...project,
+                  links: { ...project.links, demo: e.target.value },
+                })
+              }
+            />
+            <Input
+              label="GitHub URL"
+              name="links.github"
+              value={project.links.github}
+              onChange={(e) =>
+                setProject({
+                  ...project,
+                  links: { ...project.links, github: e.target.value },
+                })
+              }
+            />
+            {/* Add Website URL Input */}
+            <Input
+              label="Website URL"
+              name="links.website"
+              value={project.links.website}
+              onChange={(e) =>
+                setProject({
+                  ...project,
+                  links: { ...project.links, website: e.target.value },
+                })
+              }
+            />
+          </div>
+
+          <Input
+            label="Tags (comma-separated)"
+            value={project.tags.join(", ")}
+            onChange={(e) =>
+              setProject({
+                ...project,
+                tags: e.target.value.split(",").map((t) => t.trim()),
+              })
+            }
+          />
+
+          <div className="mt-6 flex items-center gap-4">
+            <button
+              type="submit"
+              disabled={uploading}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50"
+            >
+              {uploading ? "Saving..." : "Save Project"}
+            </button>
+            {success.project && (
+              <span className="text-green-500 text-sm">✓ Project saved!</span>
+            )}
+            {error.project && (
+              <span className="text-red-500 text-sm">{error.project}</span>
+            )}
+          </div>
         </div>
       </form>
 
-      {/* Skills Section */}
-      <form onSubmit={(e) => handleSubmit(e, "skills")} className="space-y-6">
-        <div className="p-6 rounded-lg mb-6 bg-white shadow-lg">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Skills</h2>
+      {/* Skills Form */}
+      <form onSubmit={(e) => handleSubmit(e, "skills")} className="mb-8">
+        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <GitBranch size={20} /> Skills
+          </h2>
 
-          {/* Dynamic Input for Skills */}
           <DynamicInput
-            label="Add Skills"
+            label="Technical Skills"
             items={skills}
             setItems={setSkills}
-            placeholders={{
-              title: "Skill",
-              description: "Percentage",
-            }}
             fields={[
-              { key: "title", label: "Skill", placeholder: "Skill" },
+              { key: "title", label: "Skill", placeholder: "e.g., React" },
               {
                 key: "description",
-                label: "Percentage",
-                placeholder: "Percentage",
+                label: "Level",
+                placeholder: "e.g., Advanced",
               },
             ]}
           />
-        </div>
 
-        {/* Submit Button */}
-        <div className="text-center">
-          <button
-            type="submit"
-            disabled={uploading}
-            className="bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 disabled:opacity-50"
-          >
-            {uploading ? "Uploading..." : "Submit Skills"}
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              type="submit"
+              disabled={uploading}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50"
+            >
+              {uploading ? "Saving..." : "Save Skills"}
+            </button>
+            {success.skills && (
+              <span className="text-green-500 text-sm">✓ Skills saved!</span>
+            )}
+            {error.skills && (
+              <span className="text-red-500 text-sm">{error.skills}</span>
+            )}
+          </div>
         </div>
       </form>
 
-      {/* Certificates Section */}
-      <form
-        onSubmit={(e) => handleSubmit(e, "certificates")}
-        className="space-y-6"
-      >
-        <div className="p-6 rounded-lg mb-6 bg-white shadow-lg">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Certificates
-          </h2>
-          <DynamicInput
-            label="Add Certificates"
-            items={certificates}
-            setItems={setCertificates}
-            placeholders={{ title: "Certificate Title", description: "Link" }}
-            fields={[
-              {
-                key: "title",
-                label: "Title",
-                placeholder: "Certificate Title",
-              },
-              { key: "issuer", label: "Issuer", placeholder: "Issuer" },
-              { key: "date", label: "Date", placeholder: "Year" },
-              {
-                key: "credentialUrl",
-                label: "Credential URL",
-                placeholder: "https://...",
-              },
-              { key: "image", label: "Image URL", placeholder: "Image URL" },
-              { key: "category", label: "Category", placeholder: "Category" },
-            ]}
-          />
-        </div>
-        <div className="text-center">
-          <button
-            type="submit"
-            disabled={uploading}
-            className="bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 disabled:opacity-50"
-          >
-            {uploading ? "Uploading..." : "Submit Certificates"}
-          </button>
-        </div>
-      </form>
+      {/* Certificates & Achievements Forms */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <form
+          onSubmit={(e) => handleSubmit(e, "certificates")}
+          className="mb-8"
+        >
+          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <Bookmark size={20} /> Certificates
+            </h2>
 
-      {/* Achievements Section */}
-      <form
-        onSubmit={(e) => handleSubmit(e, "achievements")}
-        className="space-y-6"
-      >
-        <div className="p-6 rounded-lg mb-6 bg-white shadow-lg">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Achievements
-          </h2>
-          <DynamicInput
-            label="Add Achievements"
-            items={achievements}
-            setItems={setAchievements}
-            placeholders={{ title: "Achievement", description: "Details/Link" }}
-            fields={[
-              { key: "title", label: "Title", placeholder: "Achievement" },
-              {
-                key: "description",
-                label: "Description",
-                placeholder: "Details",
-              },
-              { key: "date", label: "Date", placeholder: "Year" },
-              { key: "icon", label: "Icon", placeholder: "Icon Name" },
-            ]}
-          />
-        </div>
-        <div className="text-center">
-          <button
-            type="submit"
-            disabled={uploading}
-            className="bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 disabled:opacity-50"
-          >
-            {uploading ? "Uploading..." : "Submit Achievements"}
-          </button>
-        </div>
-      </form>
+            <DynamicInput
+              label="Certifications"
+              items={certificates}
+              setItems={setCertificates}
+              fields={[
+                {
+                  key: "title",
+                  label: "Title",
+                  placeholder: "Certificate name",
+                },
+                {
+                  key: "issuer",
+                  label: "Issuer",
+                  placeholder: "Issuing organization",
+                },
+                { key: "date", label: "Date", placeholder: "YYYY-MM-DD" },
+                {
+                  key: "credentialUrl",
+                  label: "URL",
+                  placeholder: "Credential URL",
+                },
+              ]}
+            />
+
+            <div className="flex items-center gap-4">
+              <button
+                type="submit"
+                disabled={uploading}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50"
+              >
+                {uploading ? "Saving..." : "Save Certificates"}
+              </button>
+              {success.certificates && (
+                <span className="text-green-500 text-sm">
+                  ✓ Certificates saved!
+                </span>
+              )}
+              {error.certificates && (
+                <span className="text-red-500 text-sm">
+                  {error.certificates}
+                </span>
+              )}
+            </div>
+          </div>
+        </form>
+
+        <form
+          onSubmit={(e) => handleSubmit(e, "achievements")}
+          className="mb-8"
+        >
+          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <Trophy size={20} /> Achievements
+            </h2>
+
+            <DynamicInput
+              label="Achievements & Awards"
+              items={achievements}
+              setItems={setAchievements}
+              fields={[
+                {
+                  key: "title",
+                  label: "Title",
+                  placeholder: "Achievement name",
+                },
+                {
+                  key: "description",
+                  label: "Details",
+                  placeholder: "Description",
+                },
+                { key: "date", label: "Date", placeholder: "YYYY-MM-DD" },
+                { key: "icon", label: "Icon", placeholder: "Select icon" },
+              ]}
+            />
+
+            <div className="flex items-center gap-4">
+              <button
+                type="submit"
+                disabled={uploading}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50"
+              >
+                {uploading ? "Saving..." : "Save Achievements"}
+              </button>
+              {success.achievements && (
+                <span className="text-green-500 text-sm">
+                  ✓ Achievements saved!
+                </span>
+              )}
+              {error.achievements && (
+                <span className="text-red-500 text-sm">
+                  {error.achievements}
+                </span>
+              )}
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-700">
+        ⚠️ Security Note: Firebase configuration should be stored in environment
+        variables in production.
+      </div>
     </div>
   );
 };

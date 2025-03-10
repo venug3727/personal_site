@@ -90,14 +90,12 @@ const ResumeSection = () => {
                 >
                   <div className="absolute left-[-9px] top-0 w-4 h-4 bg-blue-600 rounded-full" />
                   <h4 className="text-xl font-semibold text-gray-900 dark:text-white">
-                    Senior Full Stack Developer
+                    Frontend Developer (Internship)
                   </h4>
                   <p className="text-gray-600 dark:text-gray-400">
-                    Tech Company | 2020 - Present
+                    Digital Ipsum | SEP/2024-OCT/2024
                   </p>
-                  <p className="mt-2 text-gray-600 dark:text-gray-300">
-                    Led development of multiple high-impact projects...
-                  </p>
+                  <p className="mt-2 text-gray-600 dark:text-gray-300"></p>
                 </motion.div>
 
                 {/* Display resume preview */}

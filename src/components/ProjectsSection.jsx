@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ExternalLink, Github, ArrowRight } from "lucide-react";
+import { ExternalLink, Github, ArrowRight, Globe } from "lucide-react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 import { Link } from "react-router-dom";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const ProjectsSection = () => {
   const [projects, setProjects] = useState([]);
@@ -35,6 +38,18 @@ const ProjectsSection = () => {
   useEffect(() => {
     fetchProjects();
   }, []);
+
+  // Slider settings for the image carousel
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    arrows: false,
+  };
 
   return (
     <section id="projects" className="relative py-24 px-4 overflow-hidden">
@@ -86,11 +101,17 @@ const ProjectsSection = () => {
               >
                 {/* Image Container */}
                 <div className="relative h-60 overflow-hidden">
-                  <img
-                    src={project.imageLink || "/placeholder-project.png"}
-                    alt={project.title}
-                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-                  />
+                  <Slider {...sliderSettings}>
+                    {project.imageLinks?.map((imageLink, index) => (
+                      <div key={index}>
+                        <img
+                          src={imageLink || "/placeholder-project.png"}
+                          alt={`${project.title} - Image ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </Slider>
                   <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent" />
                 </div>
 
@@ -131,6 +152,17 @@ const ProjectsSection = () => {
                         >
                           <ExternalLink className="w-4 h-4" />
                           <span>Live Demo</span>
+                        </a>
+                      )}
+                      {project.links?.website && (
+                        <a
+                          href={project.links.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                        >
+                          <Globe className="w-4 h-4" />
+                          <span>Website</span>
                         </a>
                       )}
                       {project.links?.github && (

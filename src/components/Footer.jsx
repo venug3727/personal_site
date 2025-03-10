@@ -14,7 +14,7 @@ const Footer = () => {
         >
           {/* Logo / Name */}
           <div className="mb-4 md:mb-0 text-center md:text-left">
-            <h3 className="text-lg font-bold">[Your Name or Logo]</h3>
+            <h3 className="text-lg font-bold">Venugopal C S</h3>
             <p className="text-sm">
               Crafting web experiences with passion and precision.
             </p>
@@ -28,7 +28,7 @@ const Footer = () => {
             <a href="#about" className="hover:text-gray-400 transition">
               About
             </a>
-            
+
             <a href="#contact" className="hover:text-gray-400 transition">
               Contact
             </a>

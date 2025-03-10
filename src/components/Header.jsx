@@ -127,7 +127,9 @@ const Header = () => {
         <motion.div
           initial={false}
           animate={{ height: isOpen ? "auto" : 0 }}
-          className={`md:hidden overflow-hidden ${isOpen ? "block" : "hidden"}`}
+          className={`md:hidden overflow-hidden opacity-50 bg-black ${
+            isOpen ? "block" : "hidden"
+          }`}
         >
           <div className="py-4 space-y-4">
             {menuItems.map((item) => (
@@ -140,7 +142,7 @@ const Header = () => {
                 duration={500}
                 className={`text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white pl-4 hover:scale-105 cursor-pointer flex  transition-colors ${
                   window.location.hash === `#${item.to}`
-                    ? "font-bold text-blue-600 dark:text-blue-400"
+                    ? "font-extrabold text-blue-600  dark:text-blue-400"
                     : ""
                 }`}
                 aria-label={`Navigate to ${item.name} section`}

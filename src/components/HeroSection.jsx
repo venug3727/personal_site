@@ -109,8 +109,8 @@ const HeroSection = () => {
             ease: "linear",
           }}
           style={{
-            filter: "blur(2px)",
-            zIndex: -10,
+            filter: "blur(0px)",
+            zIndex: -100,
           }}
         >
           {`<${text} />`}

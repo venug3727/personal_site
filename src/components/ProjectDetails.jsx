@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { ExternalLink, Github } from "lucide-react";
+import { ExternalLink, Github, Globe } from "lucide-react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 // Helper function to extract Google Drive ID
 const extractDriveId = (url) => {
@@ -37,6 +40,18 @@ const ProjectDetails = () => {
 
     fetchProject();
   }, [projectId]);
+
+  // Slider settings for the image carousel
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    arrows: false,
+  };
 
   if (loading) {
     return (
@@ -88,15 +103,19 @@ const ProjectDetails = () => {
           )}
 
           {/* Image Section */}
-          {project.imageLink && (
-            <div className="mb-6">
-              <img
-                src={project.imageLink}
-                alt={project.title}
-                className="w-full h-auto rounded-xl object-cover"
-              />
-            </div>
-          )}
+          <div className="relative h-96 overflow-hidden rounded-xl mb-6">
+            <Slider {...sliderSettings}>
+              {project.imageLinks?.map((imageLink, index) => (
+                <div key={index}>
+                  <img
+                    src={imageLink}
+                    alt={`${project.title} - Image ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
+            </Slider>
+          </div>
 
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             {project.title}
@@ -133,7 +152,7 @@ const ProjectDetails = () => {
           )}
 
           <div className="flex gap-4">
-            {/* {project.links?.demo && (
+            {project.links?.demo && (
               <a
                 href={project.links.demo}
                 target="_blank"
@@ -143,8 +162,18 @@ const ProjectDetails = () => {
                 <ExternalLink className="w-5 h-5" />
                 <span>Live Demo</span>
               </a>
-            )} */}
-
+            )}
+            {project.links?.website && (
+              <a
+                href={project.links.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                <Globe className="w-5 h-5" />
+                <span>Website</span>
+              </a>
+            )}
             {project.links?.github && (
               <a
                 href={project.links.github}

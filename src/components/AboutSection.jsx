@@ -14,9 +14,9 @@ const AboutSection = () => {
 
   const skills = [
     { name: "Web Development", icon: Terminal },
-    { name: "UI/UX Design", icon: Code },
+    { name: "Frontend Development", icon: Code },
     { name: "Project Management", icon: Briefcase },
-    { name: "DevOps", icon: Rocket },
+    { name: "AI", icon: Rocket },
   ];
 
   return (
@@ -63,10 +63,9 @@ const AboutSection = () => {
                 transition={{ delay: 0.4 }}
                 className="text-lg md:text-xl text-gray-600 dark:text-gray-300 leading-relaxed"
               >
-                I'm a passionate Full Stack Developer with expertise in creating
-                modern web applications. With 3+ years of experience, I
-                specialize in bridging the gap between design and technical
-                implementation.
+                I'm a passionate Frontend Developer with expertise in creating
+                modern web applications. I specialize in bridging the gap
+                between design and technical implementation.
               </motion.p>
 
               <motion.p

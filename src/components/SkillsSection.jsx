@@ -73,8 +73,8 @@ const SkillsSection = () => {
 
                 {/* Skills List */}
                 <div className="space-y-6">
-                  {Array.isArray(group.skills) && group.skills.length > 0 ? (
-                    group.skills.map((skill, skillIndex) => (
+                  {Array.isArray(group.items) && group.items.length > 0 ? (
+                    group.items.map((skill, skillIndex) => (
                       <div
                         key={skill.heading || skillIndex}
                         className="space-y-2"
