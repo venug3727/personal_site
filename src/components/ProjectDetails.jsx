@@ -152,17 +152,6 @@ const ProjectDetails = () => {
           )}
 
           <div className="flex gap-4">
-            {project.links?.demo && (
-              <a
-                href={project.links.demo}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <ExternalLink className="w-5 h-5" />
-                <span>Live Demo</span>
-              </a>
-            )}
             {project.links?.website && (
               <a
                 href={project.links.website}

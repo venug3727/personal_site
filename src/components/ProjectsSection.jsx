@@ -143,17 +143,6 @@ const ProjectsSection = () => {
                   {/* Links */}
                   <div className="flex items-center justify-between mt-6">
                     <div className="flex gap-4">
-                      {project.links?.demo && (
-                        <a
-                          href={project.links.demo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                          <span>Live Demo</span>
-                        </a>
-                      )}
                       {project.links?.website && (
                         <a
                           href={project.links.website}

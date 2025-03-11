@@ -30,10 +30,10 @@ const SkillsSection = () => {
   return (
     <section
       id="skills"
-      className="relative py-24 px-4 bg-gray-50 dark:bg-gray-900 overflow-hidden"
+      className="relative py-24 px-4  bg-gray-50 dark:bg-gray-900 overflow-hidden"
     >
       {/* Background gradient */}
-      <div className="absolute inset-0 -z-10">
+      <div className="absolute inset-0 pb-[-100px] -z-10">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10" />
         <div className="absolute inset-0 bg-grid-pattern opacity-10 dark:opacity-20" />
       </div>
@@ -45,7 +45,7 @@ const SkillsSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-4xl md:text-5xl font-bold text-center mb-16 text-gray-900 dark:text-white"
+          className="text-4xl md:text-5xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 mb-6"
         >
           Skills & Expertise
         </motion.h1>
