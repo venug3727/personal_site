@@ -14,7 +14,13 @@ import {
 
 // Firebase configuration (WARNING: This should be in environment variables in production)
 const firebaseConfig = {
-  /* ... */
+  apiKey: "AIzaSyDS27RDZrx72z7QwnedhX7iVkLXJW4t4Oc",
+  authDomain: "persnal-website-9ab5f.firebaseapp.com",
+  projectId: "persnal-website-9ab5f",
+  storageBucket: "persnal-website-9ab5f.appspot.com",
+  messagingSenderId: "135506035497",
+  appId: "1:135506035497:web:62199e679d661e2b3d6d38",
+  measurementId: "G-2KE6NK0XY9",
 };
 
 // Initialize Firebase
@@ -56,13 +62,22 @@ const DynamicInput = ({ label, items, setItems, fields, section }) => {
   const [error, setError] = useState("");
 
   const handleAdd = () => {
-    const missingFields = fields.filter((field) => !currentItem[field.key]);
+    // Check for missing required fields
+    const missingFields = fields.filter(
+      (field) => field.required && !currentItem[field.key]
+    );
     if (missingFields.length > 0) {
       setError(`Missing: ${missingFields.map((f) => f.label).join(", ")}`);
       return;
     }
 
-    setItems([...items, currentItem]);
+    // Set default values for optional fields
+    const newItem = fields.reduce((acc, field) => {
+      acc[field.key] = currentItem[field.key] || ""; // Default to empty string if not provided
+      return acc;
+    }, {});
+
+    setItems([...items, newItem]);
     setCurrentItem({});
     setError("");
   };
@@ -90,7 +105,7 @@ const DynamicInput = ({ label, items, setItems, fields, section }) => {
               {fields.map((field) => (
                 <span key={field.key} className="text-sm">
                   <span className="font-medium">{field.label}:</span>{" "}
-                  {item[field.key]}
+                  {item[field.key] || "N/A"}
                 </span>
               ))}
             </div>
@@ -177,15 +192,28 @@ const AdminPage = () => {
     setSuccess((prev) => ({ ...prev, [section]: false }));
 
     try {
+      // Wrap certificates in an object
       const data = {
         project: project,
         skills: { items: skills },
-        certificates: { items: certificates },
+        certificates: { certificates: certificates }, // Wrap certificates in an object
         achievements: { items: achievements },
       }[section];
 
+      // Validate certificates data
+      if (section === "certificates") {
+        const invalidCertificates = certificates.some(
+          (cert) => !cert.title || !cert.category || !cert.issuer || !cert.date
+        );
+        if (invalidCertificates) {
+          throw new Error(
+            "Please fill out all required fields for certificates."
+          );
+        }
+      }
+
       const sectionRef = doc(collection(db, section));
-      await setDoc(sectionRef, data);
+      await setDoc(sectionRef, data); // Save the wrapped object
 
       setSuccess((prev) => ({ ...prev, [section]: true }));
       setTimeout(
@@ -199,7 +227,7 @@ const AdminPage = () => {
           title: "",
           description: "",
           imageLinks: [],
-          links: { demo: "", github: "", website: "" }, // Reset website field
+          links: { demo: "", github: "", website: "" },
           tags: [],
         });
       } else {
@@ -391,18 +419,32 @@ const AdminPage = () => {
                   key: "title",
                   label: "Title",
                   placeholder: "Certificate name",
+                  required: true,
+                },
+                {
+                  key: "category",
+                  label: "Category",
+                  placeholder: "e.g., Programming",
+                  required: true,
                 },
                 {
                   key: "issuer",
                   label: "Issuer",
                   placeholder: "Issuing organization",
+                  required: true,
                 },
-                { key: "date", label: "Date", placeholder: "YYYY-MM-DD" },
+                {
+                  key: "date",
+                  label: "Date",
+                  placeholder: "YYYY-MM-DD",
+                  required: true,
+                },
                 {
                   key: "credentialUrl",
-                  label: "URL",
+                  label: "Credential URL",
                   placeholder: "Credential URL",
                 },
+                { key: "image", label: "Image URL", placeholder: "Image URL" },
               ]}
             />
 
