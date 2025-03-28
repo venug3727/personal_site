@@ -10,9 +10,9 @@ import ContactSection from "./components/ContactSection";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Footer from "./components/Footer";
 import ResumeSection from "./components/ResumeSection";
-import Admin from "./components/AdminPage";
+import Admin from "./components/adminpage/AdminPage";
 import Achievement from "./components/Achievement";
-import ProjectDetails from "./components/ProjectDetails"; // Ensure this file exists
+import ProjectDetails from "./components/ProjectDetails";
 
 function App() {
   const [isDark, setIsDark] = useState(true);
