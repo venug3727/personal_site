@@ -1,6 +1,18 @@
 import { motion, useTransform, useScroll, useSpring } from "framer-motion";
 import { Github, Linkedin, Mail } from "lucide-react";
 import { useRef } from "react";
+import { SiLeetcode } from "react-icons/si";
+const LeetcodeIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    width="24"
+    height="24"
+  >
+    <path d="M9.184 22.56a1.227 1.227 0 0 1-.96-.48l-4.8-5.76a1.234 1.234 0 0 1 0-1.536l1.152-1.152a1.233 1.233 0 0 1 1.536 0l4.224 4.512a.144.144 0 0 0 .192 0l4.416-4.608-10.08-9.6a1.227 1.227 0 0 1 0-1.728L7.28.496a1.227 1.227 0 0 1 1.728 0l10.848 10.176a1.227 1.227 0 0 1 0 1.728L10.4 22.08a1.227 1.227 0 0 1-.96.48zm6.816-4.56a1.872 1.872 0 0 1 1.872-1.872h5.328a1.872 1.872 0 0 1 1.872 1.872v1.056a1.872 1.872 0 0 1-1.872 1.872h-5.328a1.872 1.872 0 0 1-1.872-1.872V18z" />
+  </svg>
+);
 
 const HeroSection = () => {
   const ref = useRef(null);
@@ -307,6 +319,11 @@ const HeroSection = () => {
                 icon: Mail,
                 href: "mailto:venug3727@gmail.com",
                 label: "Email",
+              },
+              {
+                icon: SiLeetcode,
+                href: "https://leetcode.com/u/venugopal128/",
+                label: "LeetCode",
               },
             ].map(({ icon: Icon, href, label }, index) => (
               <motion.a
