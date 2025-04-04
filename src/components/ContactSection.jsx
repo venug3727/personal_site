@@ -23,7 +23,7 @@ const ContactSection = () => {
 
     emailjs
       .send(
-        "service_yhqibx9",
+        "service_ci5u2ko",
         "template_7bweltd",
         formData,
         "ApBoHzkLiWVDh-_V6"
